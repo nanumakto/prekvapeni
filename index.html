@@ -170,14 +170,26 @@
 
 <div class="stage"></div>
 
-<div class="curtain" id="curtain">Klikni pro začátek</div>
+<!-- OPONA -->
+<div class="curtain-wrapper" id="curtain">
+  <div class="curtain-left"></div>
+  <div class="curtain-right"></div>
+</div>
 
-<div class="envelope" id="envelope"></div>
+<!-- OBÁLKA -->
+<div class="envelope" id="envelope">
+  <div class="flap"></div>
+</div>
+
+<!-- FOTKA -->
 <div class="photo" id="photo"></div>
 
-<!-- YouTube hudba (autoplay po interakci) -->
+<!-- ZVUK OPONY -->
+<audio id="curtainSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4d6f2f7d2f.mp3?filename=theatre-curtain-116199.mp3"></audio>
+
+<!-- HUDBA -->
 <iframe id="music" width="0" height="0"
-  src="https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=1&mute=1"
+  src="https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=0&mute=1"
   allow="autoplay">
 </iframe>
 
@@ -185,24 +197,27 @@
   const curtain = document.getElementById('curtain');
   const envelope = document.getElementById('envelope');
   const photo = document.getElementById('photo');
+  const curtainSound = document.getElementById('curtainSound');
   const music = document.getElementById('music');
 
   curtain.addEventListener('click', () => {
     curtain.classList.add('open');
+    curtainSound.play();
 
-    // zvuk opony (lze doplnit vlastní mp3)
     setTimeout(() => {
       envelope.classList.add('show');
-    }, 2000);
-
-    // spustit hudbu po 1s (odmutování po interakci)
-    setTimeout(() => {
-      music.src = "https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=1";
-    }, 1000);
+    }, 2500);
   });
 
   envelope.addEventListener('click', () => {
-    photo.classList.add('show');
+    envelope.classList.add('open');
+
+    setTimeout(() => {
+      photo.classList.add('show');
+
+      // spuštění hudby až po zobrazení fotky
+      music.src = "https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=1";
+    }, 1200);
   });
 </script>
 
