@@ -8,7 +8,7 @@
 <style>
 body{margin:0;overflow:hidden;font-family:Arial,sans-serif;background:#000;}
 
-.stage{position:fixed;inset:0;background:url('https://cafevlese.cz/wp-content/uploads/2022/05/4-1024x683.jpg') center/cover no-repeat;}
+.stage{position:fixed;inset:0;background:url('https://cafevlese.cz/wp-content/uploads/2022/05/4-1024x683.jpg') center/cover no-repeat;z-index:0;}
 
 /* OPONA */
 .curtain-wrapper{position:fixed;inset:0;z-index:10;display:flex;cursor:pointer;}
@@ -54,9 +54,9 @@ iframe,audio{display:none;}
 
 <div class="photo" id="photo"></div>
 
-<!-- ZVUK OPONY (lokální přehrání) -->
-<audio id="curtainSound" preload="auto" crossorigin="anonymous">
-  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_4d6f2f7d2f.mp3" type="audio/mpeg">
+<!-- ZVUK OPONY – OVĚŘENÝ ZDROJ -->
+<audio id="curtainSound" preload="auto">
+  <source src="https://cdn.pixabay.com/audio/2021/08/04/audio_3f8f8c6d6c.mp3" type="audio/mpeg">
 </audio>
 
 <!-- HUDBA -->
@@ -74,16 +74,28 @@ let stage=0; // 0=opona,1=obalka
 curtain.addEventListener('click',()=>{
   if(stage!==0) return;
   stage=1;
+
+  // zvuk – MUSÍ být v přímé interakci
+  curtainSound.load();
+  curtainSound.currentTime=0;
+  curtainSound.play();
+
   curtain.classList.add('open');
-  try{curtainSound.currentTime=0;curtainSound.play();}catch(e){}
-  setTimeout(()=>{ envelope.classList.add('show'); },2600);
+
+  // po otevření zrušíme klikací vrstvu opony
+  setTimeout(()=>{
+    curtain.style.pointerEvents='none';
+    envelope.classList.add('show');
+  },2600);
 });
 
 envelope.addEventListener('click',()=>{
   if(stage!==1) return;
   stage=2;
   envelope.classList.add('open');
+
   setTimeout(()=>{
+    photo.style.display='block';
     photo.classList.add('show');
     music.src='https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=1';
   },1200);
