@@ -73,7 +73,7 @@
         }
         .envelope.open .flap { transform: rotateX(180deg); } 
 
-        /* FOTKA - ZÁKLADNÍ NASTAVENÍ */
+        /* FOTKA */
         .photo {
             position: absolute;
             left: 50%;
@@ -89,31 +89,14 @@
             transition: transform 2s cubic-bezier(.17,.67,.25,1), opacity 1s ease;
         }
 
-        /* --- RESPONZIVITA (MOBILY) --- */
-        
-        /* Velikost pro počítače */
+        /* RESPONZIVITA */
         @media (min-width: 601px) {
-            .photo.reveal {
-                opacity: 1;
-                transform: translate(-50%, -135%) scale(3.2); 
-            }
+            .photo.reveal { opacity: 1; transform: translate(-50%, -135%) scale(3.2); }
         }
-
-        /* Velikost pro mobily */
         @media (max-width: 600px) {
-            .envelope {
-                width: 240px; /* Trochu menší obálka pro mobily */
-                height: 155px;
-            }
-            .photo {
-                width: 120px; /* Menší základní šířka fotky */
-                height: 190px;
-            }
-            .photo.reveal {
-                opacity: 1;
-                /* Na mobilu zmenšíme scale, aby fotka nepřetekla displej */
-                transform: translate(-50%, -125%) scale(2.1); 
-            }
+            .envelope { width: 240px; height: 155px; }
+            .photo { width: 120px; height: 190px; }
+            .photo.reveal { opacity: 1; transform: translate(-50%, -125%) scale(2.1); }
         }
     </style>
 </head>
@@ -133,6 +116,7 @@
 
 <div class="photo" id="photo"></div>
 
+<audio id="crowdNoise" src="crowd_noise.mp3" loop autoplay preload="auto"></audio>
 <audio id="curtainSound" src="curtain.mp3" preload="auto"></audio>
 <audio id="bgMusic" src="silena.mp3" preload="auto"></audio>
 
@@ -140,17 +124,28 @@
 const curtain = document.getElementById('curtain');
 const envelope = document.getElementById('envelope');
 const photo = document.getElementById('photo');
+const crowdNoise = document.getElementById('crowdNoise');
 const curtainSound = document.getElementById('curtainSound');
 const bgMusic = document.getElementById('bgMusic');
 
 let stage = 0;
+
+// Nastavení hlasitosti
+crowdNoise.volume = 0.3;     // Hluk davu na 30%
+curtainSound.volume = 1.0;   // Opona na 100%
+bgMusic.volume = 1.0;        // Hlavní hudba na 100%
 
 // 1. KLIK NA OPONU
 curtain.addEventListener('click', () => {
     if (stage !== 0) return;
     stage = 1;
 
-    curtainSound.play().catch(e => console.error("Soubor curtain.mp3 nenalezen:", e));
+    // Pojistka pro prohlížeče: spustit hluk davu, pokud byl zablokován
+    crowdNoise.play().catch(() => {});
+
+    // Přehrát oponu
+    curtainSound.play().catch(e => console.error("curtain.mp3 chybí"));
+    
     curtain.classList.add('open');
 
     setTimeout(() => {
@@ -168,9 +163,14 @@ envelope.addEventListener('click', () => {
     setTimeout(() => {
         photo.classList.add('reveal');
         
-        // Hudba začne po 2 sekundách, až se fotka úplně zvětší
+        // Hudba začne hrát po dojetí fotky
         setTimeout(() => {
-            bgMusic.play().catch(e => console.error("Soubor silena.mp3 nenalezen:", e));
+            // Zastavit hluk davu
+            crowdNoise.pause();
+            crowdNoise.currentTime = 0;
+
+            // Spustit šílenou hudbu
+            bgMusic.play().catch(e => console.error("silena.mp3 chybí"));
         }, 2000); 
 
     }, 600);
