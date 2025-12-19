@@ -5,24 +5,18 @@
     <title>Vánoční Překvapení</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background: #000; height: 100vh; }
+        body { margin: 0; overflow: hidden; font-family: 'Arial Black', sans-serif; background: #000; height: 100vh; }
         
-        /* POZADÍ */
+        /* POZADÍ A SNÍH */
         .stage { 
-            position: fixed; 
-            inset: 0; 
+            position: fixed; inset: 0; 
             background: url('https://cafevlese.cz/wp-content/uploads/2022/05/4-1024x683.jpg') center/cover no-repeat; 
             z-index: 0; 
         }
+        .snow-container { position: absolute; width: 100%; height: 100%; pointer-events: none; z-index: 5; }
 
         /* OPONA */
-        .curtain-wrapper { 
-            position: fixed; 
-            inset: 0; 
-            z-index: 100; 
-            display: flex; 
-            cursor: pointer; 
-        }
+        .curtain-wrapper { position: fixed; inset: 0; z-index: 100; display: flex; cursor: pointer; }
         .curtain-left, .curtain-right {
             width: 50%; height: 100%;
             background: repeating-linear-gradient(90deg, #5a0000, #7b0000 12px, #8b0000 24px);
@@ -33,60 +27,44 @@
         .curtain-wrapper.open .curtain-right { transform: translateX(100%); }  
         .curtain-wrapper.open { pointer-events: none; }
 
-        /* OBÁLKA */
+        /* OBÁLKA S ANIMACÍ TŘESENÍ */
         .envelope { 
-            position: absolute; 
-            top: -300px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            width: 280px; 
-            height: 180px; 
-            display: none; 
-            cursor: pointer; 
-            z-index: 10; 
+            position: absolute; top: -300px; left: 50%; transform: translateX(-50%); 
+            width: 280px; height: 180px; display: none; cursor: pointer; z-index: 10; 
         }
         .envelope.show { 
-            display: block; 
-            animation: fall 1.5s ease-out forwards; 
+            display: block; animation: fall 1.5s ease-out forwards, shake 2s infinite 1.5s; 
         }
-        @keyframes fall { 
-            to { top: 65%; transform: translate(-50%, -50%); } 
+        @keyframes fall { to { top: 65%; transform: translate(-50%, -50%); } }
+        @keyframes shake {
+            0%, 100% { transform: translate(-50%, -50%) rotate(0deg); }
+            20% { transform: translate(-50%, -50%) rotate(1deg); }
+            40% { transform: translate(-50%, -50%) rotate(-1deg); }
         }
         
-        .envelope .body { 
-            position: absolute; 
-            inset: 0; 
-            background: #f6f1e8; 
-            border-radius: 8px; 
-            box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
-            z-index: 12; 
-        } 
+        .envelope .body { position: absolute; inset: 0; background: #f6f1e8; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.6); z-index: 12; } 
         .envelope .flap { 
-            position: absolute; 
-            top: 0; left: 0; right: 0; 
-            height: 60%; 
-            background: #efe6d8; 
-            clip-path: polygon(0 0, 100% 0, 50% 100%); 
-            transform-origin: top; 
-            transition: transform 0.8s ease; 
-            z-index: 13; 
+            position: absolute; top: 0; left: 0; right: 0; height: 60%; 
+            background: #efe6d8; clip-path: polygon(0 0, 100% 0, 50% 100%); 
+            transform-origin: top; transition: transform 0.8s ease; z-index: 13; 
         }
         .envelope.open .flap { transform: rotateX(180deg); } 
+        .envelope.open { animation: none; top: 65%; transform: translate(-50%, -50%); }
 
         /* FOTKA */
         .photo {
-            position: absolute;
-            left: 50%;
-            top: 65%;
-            width: 140px;
-            height: 220px;
-            transform: translate(-50%, -50%) scale(0.2);
-            opacity: 0;
-            z-index: 11; 
+            position: absolute; left: 50%; top: 65%; width: 140px; height: 220px;
+            transform: translate(-50%, -50%) scale(0.2); opacity: 0; z-index: 11; 
             background: url('https://static.wixstatic.com/media/f367ba_caa1f2aefcc041249f46cab85e210eae~mv2.jpg/v1/fill/w_320,h_555,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEBPOSTER.jpg') center/cover no-repeat;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.9);
-            border: 6px solid white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.9); border: 6px solid white;
             transition: transform 2s cubic-bezier(.17,.67,.25,1), opacity 1s ease;
+        }
+
+        /* NÁPIS */
+        .wish-text {
+            position: absolute; bottom: 10%; left: 50%; transform: translateX(-50%);
+            color: white; font-size: 2.5rem; text-shadow: 0 0 20px #ff0000, 0 0 10px #000;
+            opacity: 0; transition: opacity 1.5s ease; z-index: 15; text-align: center; width: 100%;
         }
 
         /* RESPONZIVITA */
@@ -94,15 +72,25 @@
             .photo.reveal { opacity: 1; transform: translate(-50%, -135%) scale(3.2); }
         }
         @media (max-width: 600px) {
-            .envelope { width: 240px; height: 155px; }
-            .photo { width: 120px; height: 190px; }
-            .photo.reveal { opacity: 1; transform: translate(-50%, -125%) scale(2.1); }
+            .envelope { width: 220px; height: 140px; }
+            .photo { width: 110px; height: 175px; }
+            .photo.reveal { opacity: 1; transform: translate(-50%, -130%) scale(2.2); }
+            .wish-text { font-size: 1.8rem; bottom: 5%; }
         }
+
+        /* SNĚHOVÁ VLOČKA STYL */
+        .snowflake {
+            position: absolute; top: -10%; color: white; font-size: 1em; pointer-events: none;
+            animation: fall-snow linear infinite;
+        }
+        @keyframes fall-snow { to { transform: translateY(110vh) rotate(360deg); } }
     </style>
 </head>
 <body>
 
-<div class="stage"></div>
+<div class="stage">
+    <div class="snow-container" id="snow"></div>
+</div>
 
 <div class="curtain-wrapper" id="curtain">
     <div class="curtain-left"></div>
@@ -115,8 +103,9 @@
 </div>
 
 <div class="photo" id="photo"></div>
+<div class="wish-text" id="wish">VESELÉ VÁNOCE!</div>
 
-<audio id="crowdNoise" src="crowd_noise.mp3" loop autoplay preload="auto"></audio>
+<audio id="crowdNoise" src="crowd_noise.mp3" loop preload="auto"></audio>
 <audio id="curtainSound" src="curtain.mp3" preload="auto"></audio>
 <audio id="bgMusic" src="silena.mp3" preload="auto"></audio>
 
@@ -124,27 +113,42 @@
 const curtain = document.getElementById('curtain');
 const envelope = document.getElementById('envelope');
 const photo = document.getElementById('photo');
+const wish = document.getElementById('wish');
 const crowdNoise = document.getElementById('crowdNoise');
 const curtainSound = document.getElementById('curtainSound');
 const bgMusic = document.getElementById('bgMusic');
 
-let stage = 0;
+// Vytvoření sněhu
+function createSnow() {
+    const snowContainer = document.getElementById('snow');
+    const flakes = ['❄', '❅', '❆'];
+    for (let i = 0; i < 50; i++) {
+        let flake = document.createElement('div');
+        flake.className = 'snowflake';
+        flake.innerHTML = flakes[Math.floor(Math.random() * flakes.length)];
+        flake.style.left = Math.random() * 100 + 'vw';
+        flake.style.animationDuration = (Math.random() * 3 + 2) + 's';
+        flake.style.opacity = Math.random();
+        flake.style.fontSize = (Math.random() * 10 + 10) + 'px';
+        snowContainer.appendChild(flake);
+    }
+}
+createSnow();
 
 // Nastavení hlasitosti
-crowdNoise.volume = 0.3;     // Hluk davu na 30%
-curtainSound.volume = 1.0;   // Opona na 100%
-bgMusic.volume = 1.0;        // Hlavní hudba na 100%
+crowdNoise.volume = 0.25;
+curtainSound.volume = 1.0;
+
+let stage = 0;
 
 // 1. KLIK NA OPONU
 curtain.addEventListener('click', () => {
     if (stage !== 0) return;
     stage = 1;
 
-    // Pojistka pro prohlížeče: spustit hluk davu, pokud byl zablokován
+    // OBA ZVUKY STARTUJÍ HNED
     crowdNoise.play().catch(() => {});
-
-    // Přehrát oponu
-    curtainSound.play().catch(e => console.error("curtain.mp3 chybí"));
+    curtainSound.play().catch(() => {});
     
     curtain.classList.add('open');
 
@@ -163,14 +167,11 @@ envelope.addEventListener('click', () => {
     setTimeout(() => {
         photo.classList.add('reveal');
         
-        // Hudba začne hrát po dojetí fotky
         setTimeout(() => {
-            // Zastavit hluk davu
+            // KONEC DAVU, START HUDBY A TEXTU
             crowdNoise.pause();
-            crowdNoise.currentTime = 0;
-
-            // Spustit šílenou hudbu
-            bgMusic.play().catch(e => console.error("silena.mp3 chybí"));
+            bgMusic.play().catch(() => {});
+            wish.style.opacity = "1";
         }, 2000); 
 
     }, 600);
