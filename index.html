@@ -1,224 +1,118 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-  <meta charset="UTF-8">
-  <title>Překvapení</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8">
+<title>Překvapení</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <style>
-    body {
-      margin: 0;
-      font-family: Arial, sans-serif;
-      overflow: hidden;
-      background: black;
-    }
+<style>
+body{
+  margin:0;overflow:hidden;font-family:Arial,sans-serif;background:#000;
+}
 
-    /* POZADÍ ZA OPONOU */
-    .stage {
-      position: fixed;
-      inset: 0;
-      background: url('https://cafevlese.cz/wp-content/uploads/2022/05/4-1024x683.jpg') center/cover no-repeat;
-    }
+/* SCÉNA */
+.stage{
+  position:fixed;inset:0;
+  background:url('https://cafevlese.cz/wp-content/uploads/2022/05/4-1024x683.jpg') center/cover no-repeat;
+}
 
-    /* OPONA */
-    .curtain {
-      position: fixed;
-      inset: 0;
-      background: linear-gradient(90deg, #7b0000 0%, #b30000 50%, #7b0000 100%);
-      z-index: 10;
-      cursor: pointer;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      color: white;
-      font-size: 32px;
-    }
+/* OPONA */
+.curtain-wrapper{
+  position:fixed;inset:0;z-index:10;display:flex;cursor:pointer;
+}
+.curtain-left,.curtain-right{
+  width:50%;height:100%;
+  background:repeating-linear-gradient(90deg,#5a0000,#7b0000 12px,#8b0000 24px);
+  box-shadow:inset -15px 0 30px rgba(0,0,0,.7);
+  transition:transform 2.5s ease-in-out;
+}
+.curtain-right{box-shadow:inset 15px 0 30px rgba(0,0,0,.7);}
+.curtain-wrapper.open .curtain-left{transform:translateX(-100%);}  
+.curtain-wrapper.open .curtain-right{transform:translateX(100%);}  
 
-    .curtain.open {
-      animation: openCurtain 2s forwards;
-    }
+/* OBÁLKA */
+.envelope{
+  position:absolute;top:-220px;left:50%;transform:translateX(-50%);
+  width:260px;height:170px;display:none;cursor:pointer;
+}
+.envelope.show{display:block;animation:fall 1.4s cubic-bezier(.25,.46,.45,.94) forwards;}
+@keyframes fall{to{top:60%;}}
 
-    @keyframes openCurtain {
-      0% { clip-path: inset(0 0 0 0); }
-      100% { clip-path: inset(0 50% 0 50%); }
-    }
+.envelope .body{
+  position:absolute;inset:0;background:#f6f1e8;border-radius:8px;
+  box-shadow:0 20px 40px rgba(0,0,0,.45);
+}
+.envelope .flap{
+  position:absolute;top:0;left:0;right:0;height:50%;
+  background:#efe6d8;transform-origin:top;transform:rotateX(0deg);
+  clip-path:polygon(0 0,100% 0,50% 100%);
+  transition:transform 1.2s ease;
+}
+.envelope.open .flap{transform:rotateX(-150deg);} 
 
-    /* OBÁLKA */
-    .envelope {
-      position: absolute;
-      top: -200px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 160px;
-      height: 110px;
-      background: #f5f5f5;
-      border-radius: 6px;
-      box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-      display: none;
-      cursor: pointer;
-    }
+/* FOTKA */
+.photo{
+  position:absolute;top:52%;left:50%;
+  transform:translate(-50%,-50%) scale(0.7);
+  width:320px;height:555px;opacity:0;display:none;
+  background:url('https://static.wixstatic.com/media/f367ba_caa1f2aefcc041249f46cab85e210eae~mv2.jpg/v1/fill/w_320,h_555,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEBPOSTER.jpg') center/cover no-repeat;
+  box-shadow:0 30px 60px rgba(0,0,0,.6);
+  transition:all 1.4s ease;
+  z-index:5;
+}
+.photo.show{display:block;opacity:1;transform:translate(-50%,-50%) scale(1);} 
 
-    .envelope.show {
-      display: block;
-      animation: fall 1.2s ease forwards;
-    }
-
-    @keyframes fall {
-      to { top: 60%; }
-    }
-
-    /* FOTKA */
-    .photo {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      width: 320px;
-      height: 555px;
-      background: url('https://static.wixstatic.com/media/f367ba_caa1f2aefcc041249f46cab85e210eae~mv2.jpg/v1/fill/w_320,h_555,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEBPOSTER.jpg') center/cover no-repeat;
-      box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-      display: none;
-    }
-
-    .photo.show {
-      display: block;
-      animation: photoOut 1s forwards;
-    }
-
-    @keyframes photoOut {
-      to { transform: translate(-50%, -50%) scale(1); }
-    }
-
-    iframe { display: none; }
-      /* POZADÍ ZA OPONOU */
-    .stage {
-      position: fixed;
-      inset: 0;
-      background: url('https://cafevlese.cz/wp-content/uploads/2022/05/4-1024x683.jpg') center/cover no-repeat;
-      z-index: 0;
-    }
-
-    /* OPONA – REALISTIČTĚJŠÍ */
-    .curtain-wrapper {
-      position: fixed;
-      inset: 0;
-      z-index: 10;
-      display: flex;
-      cursor: pointer;
-    }
-
-    .curtain-left,
-    .curtain-right {
-      width: 50%;
-      height: 100%;
-      background: repeating-linear-gradient(90deg,#5b0000,#7b0000 10px,#9b0000 20px);
-      box-shadow: inset -10px 0 20px rgba(0,0,0,0.6);
-      transition: transform 2.5s ease-in-out;
-    }
-
-    .curtain-right { box-shadow: inset 10px 0 20px rgba(0,0,0,0.6); }
-
-    .curtain-wrapper.open .curtain-left { transform: translateX(-100%); }
-    .curtain-wrapper.open .curtain-right { transform: translateX(100%); }
-
-    /* OBÁLKA – REALISTIČTĚJŠÍ */
-    .envelope {
-      position: absolute;
-      top: -200px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 220px;
-      height: 140px;
-      background: #f7f1e3;
-      border-radius: 6px;
-      box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-      display: none;
-      cursor: pointer;
-      overflow: hidden;
-    }
-
-    .envelope.show { display: block; animation: fall 1.5s cubic-bezier(.25,.46,.45,.94) forwards; }
-
-    @keyframes fall { to { top: 65%; } }
-
-    .envelope.open { animation: openEnvelope 1.2s forwards; }
-
-    @keyframes openEnvelope { to { transform: translateX(-50%) rotateX(35deg); } }
-
-    /* FOTKA */
-    .photo {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%) scale(0);
-      width: 320px;
-      height: 555px;
-      background: url('https://static.wixstatic.com/media/f367ba_caa1f2aefcc041249f46cab85e210eae~mv2.jpg/v1/fill/w_320,h_555,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEBPOSTER.jpg') center/cover no-repeat;
-      box-shadow: 0 25px 50px rgba(0,0,0,0.5);
-      display: none;
-      z-index: 5;
-    }
-
-    .photo.show { display: block; animation: photoOut 1.2s ease forwards; }
-
-    @keyframes photoOut { to { transform: translate(-50%, -50%) scale(1); } }
-
-    iframe, audio { display: none; }
-  </style>
+iframe,audio{display:none;}
+</style>
 </head>
 <body>
 
 <div class="stage"></div>
 
-<!-- OPONA -->
 <div class="curtain-wrapper" id="curtain">
   <div class="curtain-left"></div>
   <div class="curtain-right"></div>
 </div>
 
-<!-- OBÁLKA -->
 <div class="envelope" id="envelope">
+  <div class="body"></div>
   <div class="flap"></div>
 </div>
 
-<!-- FOTKA -->
 <div class="photo" id="photo"></div>
 
-<!-- ZVUK OPONY -->
-<audio id="curtainSound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4d6f2f7d2f.mp3?filename=theatre-curtain-116199.mp3"></audio>
+<audio id="curtainSound" preload="auto"
+ src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4d6f2f7d2f.mp3?filename=theatre-curtain-116199.mp3"></audio>
 
-<!-- HUDBA -->
 <iframe id="music" width="0" height="0"
-  src="https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=0&mute=1"
-  allow="autoplay">
-</iframe>
+ src="https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=0&mute=1"
+ allow="autoplay"></iframe>
 
 <script>
-  const curtain = document.getElementById('curtain');
-  const envelope = document.getElementById('envelope');
-  const photo = document.getElementById('photo');
-  const curtainSound = document.getElementById('curtainSound');
-  const music = document.getElementById('music');
+const curtain=document.getElementById('curtain');
+const envelope=document.getElementById('envelope');
+const photo=document.getElementById('photo');
+const curtainSound=document.getElementById('curtainSound');
+const music=document.getElementById('music');
 
-  curtain.addEventListener('click', () => {
-    curtain.classList.add('open');
-    curtainSound.play();
+let curtainOpened=false;
 
-    setTimeout(() => {
-      envelope.classList.add('show');
-    }, 2500);
-  });
+curtain.addEventListener('click',()=>{
+ if(curtainOpened) return;
+ curtainOpened=true;
+ curtain.classList.add('open');
+ curtainSound.currentTime=0;
+ curtainSound.play();
+ setTimeout(()=>{envelope.classList.add('show');},2600);
+});
 
-  envelope.addEventListener('click', () => {
-    envelope.classList.add('open');
-
-    setTimeout(() => {
-      photo.classList.add('show');
-
-      // spuštění hudby až po zobrazení fotky
-      music.src = "https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=1";
-    }, 1200);
-  });
+envelope.addEventListener('click',()=>{
+ envelope.classList.add('open');
+ setTimeout(()=>{
+   photo.classList.add('show');
+   music.src='https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=1';
+ },1200);
+});
 </script>
 
 </body>
