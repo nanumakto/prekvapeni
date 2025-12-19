@@ -73,7 +73,7 @@
         }
         .envelope.open .flap { transform: rotateX(180deg); } 
 
-        /* FOTKA */
+        /* FOTKA - ZÁKLADNÍ NASTAVENÍ */
         .photo {
             position: absolute;
             left: 50%;
@@ -88,9 +88,32 @@
             border: 6px solid white;
             transition: transform 2s cubic-bezier(.17,.67,.25,1), opacity 1s ease;
         }
-        .photo.reveal {
-            opacity: 1;
-            transform: translate(-50%, -135%) scale(3.2); 
+
+        /* --- RESPONZIVITA (MOBILY) --- */
+        
+        /* Velikost pro počítače */
+        @media (min-width: 601px) {
+            .photo.reveal {
+                opacity: 1;
+                transform: translate(-50%, -135%) scale(3.2); 
+            }
+        }
+
+        /* Velikost pro mobily */
+        @media (max-width: 600px) {
+            .envelope {
+                width: 240px; /* Trochu menší obálka pro mobily */
+                height: 155px;
+            }
+            .photo {
+                width: 120px; /* Menší základní šířka fotky */
+                height: 190px;
+            }
+            .photo.reveal {
+                opacity: 1;
+                /* Na mobilu zmenšíme scale, aby fotka nepřetekla displej */
+                transform: translate(-50%, -125%) scale(2.1); 
+            }
         }
     </style>
 </head>
@@ -127,12 +150,9 @@ curtain.addEventListener('click', () => {
     if (stage !== 0) return;
     stage = 1;
 
-    // Přehraje zvuk opony
-    curtainSound.play().catch(e => console.error("Zvuk opony nenalezen:", e));
-    
+    curtainSound.play().catch(e => console.error("Soubor curtain.mp3 nenalezen:", e));
     curtain.classList.add('open');
 
-    // Po otevření opony spadne obálka
     setTimeout(() => {
         envelope.classList.add('show');
     }, 2600);
@@ -145,13 +165,12 @@ envelope.addEventListener('click', () => {
 
     envelope.classList.add('open');
 
-    // Vyjetí fotky
     setTimeout(() => {
         photo.classList.add('reveal');
         
-        // HUDBA ZAČNE HRÁT PO UKONČENÍ ANIMACE FOTKY (2 sekundy)
+        // Hudba začne po 2 sekundách, až se fotka úplně zvětší
         setTimeout(() => {
-            bgMusic.play().catch(e => console.error("Hudba nenalezena:", e));
+            bgMusic.play().catch(e => console.error("Soubor silena.mp3 nenalezen:", e));
         }, 2000); 
 
     }, 600);
