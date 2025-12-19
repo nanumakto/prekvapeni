@@ -4,10 +4,8 @@
 <meta charset="UTF-8">
 <title>Překvapení</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
 <style>
 body{margin:0;overflow:hidden;font-family:Arial,sans-serif;background:#000;}
-
 .stage{position:fixed;inset:0;background:url('https://cafevlese.cz/wp-content/uploads/2022/05/4-1024x683.jpg') center/cover no-repeat;z-index:0;}
 
 /* OPONA */
@@ -15,27 +13,24 @@ body{margin:0;overflow:hidden;font-family:Arial,sans-serif;background:#000;}
 .curtain-left,.curtain-right{
   width:50%;height:100%;
   background:repeating-linear-gradient(90deg,#5a0000,#7b0000 12px,#8b0000 24px);
-  box-shadow:inset -15px 0 30px rgba(0,0,0,.7);
   transition:transform 2.5s ease-in-out;
 }
-.curtain-right{box-shadow:inset 15px 0 30px rgba(0,0,0,.7);} 
 .curtain-wrapper.open .curtain-left{transform:translateX(-100%);}  
 .curtain-wrapper.open .curtain-right{transform:translateX(100%);}  
 
 /* OBÁLKA */
 .envelope{position:absolute;top:-220px;left:50%;transform:translateX(-50%);width:260px;height:170px;display:none;cursor:pointer;z-index:6;}
-.envelope.show{display:block;animation:fall 1.4s cubic-bezier(.25,.46,.45,.94) forwards;}
+.envelope.show{display:block;animation:fall 1.4s forwards;}
 @keyframes fall{to{top:60%;}}
-
 .envelope .body{position:absolute;inset:0;background:#f6f1e8;border-radius:8px;box-shadow:0 20px 40px rgba(0,0,0,.45);} 
-.envelope .flap{position:absolute;top:0;left:0;right:0;height:55%;background:#efe6d8;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transform:rotateX(0deg);transition:transform 1.2s ease;}
+.envelope .flap{position:absolute;top:0;left:0;right:0;height:55%;background:#efe6d8;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transition:transform 1.2s ease;z-index:7;}
 .envelope.open .flap{transform:rotateX(-160deg);} 
+.envelope.open{pointer-events:none;}
 
-/* FOTKA */
-.photo{position:absolute;top:52%;left:50%;transform:translate(-50%,-50%) scale(0.7);width:320px;height:555px;opacity:0;display:none;background:url('https://static.wixstatic.com/media/f367ba_caa1f2aefcc041249f46cab85e210eae~mv2.jpg/v1/fill/w_320,h_555,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEBPOSTER.jpg') center/cover no-repeat;box-shadow:0 30px 60px rgba(0,0,0,.6);transition:all 1.4s ease;z-index:5;}
-.photo.show{display:block;opacity:1;transform:translate(-50%,-50%) scale(1);} 
+/* FOTKA – VYJÍŽDÍ Z OBÁLKY */
+.photo{position:absolute;top:60%;left:50%;transform:translate(-50%,0);width:320px;height:555px;opacity:0;z-index:5;background:url('https://static.wixstatic.com/media/f367ba_caa1f2aefcc041249f46cab85e210eae~mv2.jpg/v1/fill/w_320,h_555,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEBPOSTER.jpg') center/cover no-repeat;box-shadow:0 30px 60px rgba(0,0,0,.6);transition:transform 1.6s ease, opacity 1.2s ease;}
+.photo.show{opacity:1;transform:translate(-50%,-320px);} 
 
-iframe,audio{display:none;}
 </style>
 </head>
 <body>
@@ -54,12 +49,10 @@ iframe,audio{display:none;}
 
 <div class="photo" id="photo"></div>
 
-<!-- ZVUK OPONY – OVĚŘENÝ ZDROJ -->
-<audio id="curtainSound" preload="auto">
-  <source src="https://cdn.pixabay.com/audio/2021/08/04/audio_3f8f8c6d6c.mp3" type="audio/mpeg">
-</audio>
+<!-- ZVUK OPONY – PŘÍMÝ MP3 -->
+<audio id="curtainSound" preload="auto" src="https://cdn.pixabay.com/audio/2022/03/15/audio_1b7d0c0f8c.mp3"></audio>
 
-<!-- HUDBA -->
+<!-- HUDBA – AŽ PO FOTCE -->
 <iframe id="music" width="0" height="0" allow="autoplay"></iframe>
 
 <script>
@@ -68,38 +61,29 @@ const envelope=document.getElementById('envelope');
 const photo=document.getElementById('photo');
 const curtainSound=document.getElementById('curtainSound');
 const music=document.getElementById('music');
+let stage=0;
 
-let stage=0; // 0=opona,1=obalka
-
-curtain.addEventListener('click',()=>{
+curtain.onclick=()=>{
   if(stage!==0) return;
   stage=1;
-
-  // zvuk – MUSÍ být v přímé interakci
-  curtainSound.load();
   curtainSound.currentTime=0;
-  curtainSound.play();
-
+  curtainSound.play().catch(()=>{});
   curtain.classList.add('open');
-
-  // po otevření zrušíme klikací vrstvu opony
   setTimeout(()=>{
     curtain.style.pointerEvents='none';
     envelope.classList.add('show');
   },2600);
-});
+};
 
-envelope.addEventListener('click',()=>{
+envelope.onclick=()=>{
   if(stage!==1) return;
   stage=2;
   envelope.classList.add('open');
-
   setTimeout(()=>{
-    photo.style.display='block';
     photo.classList.add('show');
     music.src='https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=1';
-  },1200);
-});
+  },900);
+};
 </script>
 
 </body>
