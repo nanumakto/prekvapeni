@@ -6,60 +6,33 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
-body{
-  margin:0;overflow:hidden;font-family:Arial,sans-serif;background:#000;
-}
+body{margin:0;overflow:hidden;font-family:Arial,sans-serif;background:#000;}
 
-/* SCÉNA */
-.stage{
-  position:fixed;inset:0;
-  background:url('https://cafevlese.cz/wp-content/uploads/2022/05/4-1024x683.jpg') center/cover no-repeat;
-}
+.stage{position:fixed;inset:0;background:url('https://cafevlese.cz/wp-content/uploads/2022/05/4-1024x683.jpg') center/cover no-repeat;}
 
 /* OPONA */
-.curtain-wrapper{
-  position:fixed;inset:0;z-index:10;display:flex;cursor:pointer;
-}
+.curtain-wrapper{position:fixed;inset:0;z-index:10;display:flex;cursor:pointer;}
 .curtain-left,.curtain-right{
   width:50%;height:100%;
   background:repeating-linear-gradient(90deg,#5a0000,#7b0000 12px,#8b0000 24px);
   box-shadow:inset -15px 0 30px rgba(0,0,0,.7);
   transition:transform 2.5s ease-in-out;
 }
-.curtain-right{box-shadow:inset 15px 0 30px rgba(0,0,0,.7);}
+.curtain-right{box-shadow:inset 15px 0 30px rgba(0,0,0,.7);} 
 .curtain-wrapper.open .curtain-left{transform:translateX(-100%);}  
 .curtain-wrapper.open .curtain-right{transform:translateX(100%);}  
 
 /* OBÁLKA */
-.envelope{
-  position:absolute;top:-220px;left:50%;transform:translateX(-50%);
-  width:260px;height:170px;display:none;cursor:pointer;
-}
+.envelope{position:absolute;top:-220px;left:50%;transform:translateX(-50%);width:260px;height:170px;display:none;cursor:pointer;z-index:6;}
 .envelope.show{display:block;animation:fall 1.4s cubic-bezier(.25,.46,.45,.94) forwards;}
 @keyframes fall{to{top:60%;}}
 
-.envelope .body{
-  position:absolute;inset:0;background:#f6f1e8;border-radius:8px;
-  box-shadow:0 20px 40px rgba(0,0,0,.45);
-}
-.envelope .flap{
-  position:absolute;top:0;left:0;right:0;height:50%;
-  background:#efe6d8;transform-origin:top;transform:rotateX(0deg);
-  clip-path:polygon(0 0,100% 0,50% 100%);
-  transition:transform 1.2s ease;
-}
-.envelope.open .flap{transform:rotateX(-150deg);} 
+.envelope .body{position:absolute;inset:0;background:#f6f1e8;border-radius:8px;box-shadow:0 20px 40px rgba(0,0,0,.45);} 
+.envelope .flap{position:absolute;top:0;left:0;right:0;height:55%;background:#efe6d8;clip-path:polygon(0 0,100% 0,50% 100%);transform-origin:top;transform:rotateX(0deg);transition:transform 1.2s ease;}
+.envelope.open .flap{transform:rotateX(-160deg);} 
 
 /* FOTKA */
-.photo{
-  position:absolute;top:52%;left:50%;
-  transform:translate(-50%,-50%) scale(0.7);
-  width:320px;height:555px;opacity:0;display:none;
-  background:url('https://static.wixstatic.com/media/f367ba_caa1f2aefcc041249f46cab85e210eae~mv2.jpg/v1/fill/w_320,h_555,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEBPOSTER.jpg') center/cover no-repeat;
-  box-shadow:0 30px 60px rgba(0,0,0,.6);
-  transition:all 1.4s ease;
-  z-index:5;
-}
+.photo{position:absolute;top:52%;left:50%;transform:translate(-50%,-50%) scale(0.7);width:320px;height:555px;opacity:0;display:none;background:url('https://static.wixstatic.com/media/f367ba_caa1f2aefcc041249f46cab85e210eae~mv2.jpg/v1/fill/w_320,h_555,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEBPOSTER.jpg') center/cover no-repeat;box-shadow:0 30px 60px rgba(0,0,0,.6);transition:all 1.4s ease;z-index:5;}
 .photo.show{display:block;opacity:1;transform:translate(-50%,-50%) scale(1);} 
 
 iframe,audio{display:none;}
@@ -81,12 +54,13 @@ iframe,audio{display:none;}
 
 <div class="photo" id="photo"></div>
 
-<audio id="curtainSound" preload="auto"
- src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_4d6f2f7d2f.mp3?filename=theatre-curtain-116199.mp3"></audio>
+<!-- ZVUK OPONY (lokální přehrání) -->
+<audio id="curtainSound" preload="auto" crossorigin="anonymous">
+  <source src="https://cdn.pixabay.com/audio/2022/03/15/audio_4d6f2f7d2f.mp3" type="audio/mpeg">
+</audio>
 
-<iframe id="music" width="0" height="0"
- src="https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=0&mute=1"
- allow="autoplay"></iframe>
+<!-- HUDBA -->
+<iframe id="music" width="0" height="0" allow="autoplay"></iframe>
 
 <script>
 const curtain=document.getElementById('curtain');
@@ -95,23 +69,24 @@ const photo=document.getElementById('photo');
 const curtainSound=document.getElementById('curtainSound');
 const music=document.getElementById('music');
 
-let curtainOpened=false;
+let stage=0; // 0=opona,1=obalka
 
 curtain.addEventListener('click',()=>{
- if(curtainOpened) return;
- curtainOpened=true;
- curtain.classList.add('open');
- curtainSound.currentTime=0;
- curtainSound.play();
- setTimeout(()=>{envelope.classList.add('show');},2600);
+  if(stage!==0) return;
+  stage=1;
+  curtain.classList.add('open');
+  try{curtainSound.currentTime=0;curtainSound.play();}catch(e){}
+  setTimeout(()=>{ envelope.classList.add('show'); },2600);
 });
 
 envelope.addEventListener('click',()=>{
- envelope.classList.add('open');
- setTimeout(()=>{
-   photo.classList.add('show');
-   music.src='https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=1';
- },1200);
+  if(stage!==1) return;
+  stage=2;
+  envelope.classList.add('open');
+  setTimeout(()=>{
+    photo.classList.add('show');
+    music.src='https://www.youtube.com/embed/wD9VaHV0-cs?autoplay=1';
+  },1200);
 });
 </script>
 
