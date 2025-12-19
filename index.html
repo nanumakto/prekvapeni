@@ -2,7 +2,7 @@
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
-    <title>Překvapení</title>
+    <title>Vánoční Překvapení</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background: #000; height: 100vh; }
@@ -59,7 +59,7 @@
             background: #f6f1e8; 
             border-radius: 8px; 
             box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
-            z-index: 12; /* Před fotkou */
+            z-index: 12; 
         } 
         .envelope .flap { 
             position: absolute; 
@@ -69,7 +69,7 @@
             clip-path: polygon(0 0, 100% 0, 50% 100%); 
             transform-origin: top; 
             transition: transform 0.8s ease; 
-            z-index: 13; /* Úplně vepředu */
+            z-index: 13; 
         }
         .envelope.open .flap { transform: rotateX(180deg); } 
 
@@ -82,7 +82,7 @@
             height: 220px;
             transform: translate(-50%, -50%) scale(0.2);
             opacity: 0;
-            z-index: 11; /* Mezi tělem obálky a pozadím */
+            z-index: 11; 
             background: url('https://static.wixstatic.com/media/f367ba_caa1f2aefcc041249f46cab85e210eae~mv2.jpg/v1/fill/w_320,h_555,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEBPOSTER.jpg') center/cover no-repeat;
             box-shadow: 0 20px 50px rgba(0,0,0,0.9);
             border: 6px solid white;
@@ -90,7 +90,7 @@
         }
         .photo.reveal {
             opacity: 1;
-            transform: translate(-50%, -135%) scale(3.2); /* Výrazné zvětšení */
+            transform: translate(-50%, -135%) scale(3.2); 
         }
     </style>
 </head>
@@ -110,18 +110,15 @@
 
 <div class="photo" id="photo"></div>
 
-<audio id="curtainSound" preload="auto">
-    <source src="https://cdn.pixabay.com/audio/2022/11/25/audio_82308.mp3" type="audio/mpeg">
-</audio>
-
-<iframe id="musicFrame" style="display:none" width="0" height="0" frameborder="0" allow="autoplay"></iframe>
+<audio id="curtainSound" src="curtain.mp3" preload="auto"></audio>
+<audio id="bgMusic" src="silena.mp3" preload="auto"></audio>
 
 <script>
 const curtain = document.getElementById('curtain');
 const envelope = document.getElementById('envelope');
 const photo = document.getElementById('photo');
 const curtainSound = document.getElementById('curtainSound');
-const musicFrame = document.getElementById('musicFrame');
+const bgMusic = document.getElementById('bgMusic');
 
 let stage = 0;
 
@@ -130,12 +127,12 @@ curtain.addEventListener('click', () => {
     if (stage !== 0) return;
     stage = 1;
 
-    // Spuštění zvuku opony
-    curtainSound.play().catch(error => console.log("Přehrávání zvuku selhalo:", error));
+    // Přehraje zvuk opony
+    curtainSound.play().catch(e => console.error("Zvuk opony nenalezen:", e));
     
     curtain.classList.add('open');
 
-    // Po doznění opony spadne obálka
+    // Po otevření opony spadne obálka
     setTimeout(() => {
         envelope.classList.add('show');
     }, 2600);
@@ -148,14 +145,13 @@ envelope.addEventListener('click', () => {
 
     envelope.classList.add('open');
 
-    // Vyjetí fotky po otevření chlopně
+    // Vyjetí fotky
     setTimeout(() => {
         photo.classList.add('reveal');
         
-        // HUDBA ZAČNE HRÁT AŽ PO UKONČENÍ ANIMACE FOTKY
-        // Animace fotky trvá 2 sekundy (viz transition: transform 2s v CSS)
+        // HUDBA ZAČNE HRÁT PO UKONČENÍ ANIMACE FOTKY (2 sekundy)
         setTimeout(() => {
-            musicFrame.src = "https://www.boomplay.com/embed/118150502/MUSIC?colType=5&colID=64987332&autoplay=true";
+            bgMusic.play().catch(e => console.error("Hudba nenalezena:", e));
         }, 2000); 
 
     }, 600);
