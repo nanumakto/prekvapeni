@@ -1,99 +1,99 @@
 <!DOCTYPE html>
 <html lang="cs">
 <head>
-    <meta charset="UTF-8">
-    <title>Překvapení</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background: #000; height: 100vh; }
-        
-        /* POZADÍ STAGE */
-        .stage { 
-            position: fixed; 
-            inset: 0; 
-            background: url('https://cafevlese.cz/wp-content/uploads/2022/05/4-1024x683.jpg') center/cover no-repeat; 
-            z-index: 0; 
-        }
+<meta charset="UTF-8">
+<title>Vánoční Překvapení</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+    body { margin: 0; overflow: hidden; font-family: Arial, sans-serif; background: #000; height: 100vh; }
+    
+    /* POZADÍ SCÉNY */
+    .stage { 
+        position: fixed; 
+        inset: 0; 
+        background: url('https://cafevlese.cz/wp-content/uploads/2022/05/4-1024x683.jpg') center/cover no-repeat; 
+        z-index: 0; 
+    }
 
-        /* OPONA */
-        .curtain-wrapper { 
-            position: fixed; 
-            inset: 0; 
-            z-index: 100; 
-            display: flex; 
-            cursor: pointer; 
-            transition: visibility 0s 2.6s;
-        }
-        .curtain-left, .curtain-right {
-            width: 50%; height: 100%;
-            background: repeating-linear-gradient(90deg, #5a0000, #7b0000 12px, #8b0000 24px);
-            transition: transform 2.6s cubic-bezier(0.45, 0.05, 0.55, 0.95);
-            box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
-        }
-        .curtain-wrapper.open .curtain-left { transform: translateX(-100%); }  
-        .curtain-wrapper.open .curtain-right { transform: translateX(100%); }  
-        .curtain-wrapper.open { visibility: hidden; }
+    /* OPONA */
+    .curtain-wrapper { 
+        position: fixed; 
+        inset: 0; 
+        z-index: 100; 
+        display: flex; 
+        cursor: pointer; 
+    }
+    .curtain-left, .curtain-right {
+        width: 50%; height: 100%;
+        background: repeating-linear-gradient(90deg, #5a0000, #7b0000 12px, #8b0000 24px);
+        transition: transform 2.6s cubic-bezier(0.45, 0.05, 0.55, 0.95);
+        box-shadow: inset 0 0 50px rgba(0,0,0,0.5);
+    }
+    .curtain-wrapper.open .curtain-left { transform: translateX(-100%); }  
+    .curtain-wrapper.open .curtain-right { transform: translateX(100%); }  
+    .curtain-wrapper.open { pointer-events: none; } /* Po otevření už neblokuje klikání */
 
-        /* OBÁLKA */
-        .envelope { 
-            position: absolute; 
-            top: -300px; 
-            left: 50%; 
-            transform: translateX(-50%); 
-            width: 280px; 
-            height: 180px; 
-            display: none; 
-            cursor: pointer; 
-            z-index: 10; 
-        }
-        .envelope.show { 
-            display: block; 
-            animation: fall 1.5s ease-out forwards; 
-        }
-        @keyframes fall { 
-            to { top: 50%; transform: translate(-50%, -50%); } 
-        }
-        
-        .envelope .body { 
-            position: absolute; 
-            inset: 0; 
-            background: #f6f1e8; 
-            border-radius: 4px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5); 
-            z-index: 12;
-        } 
-        .envelope .flap { 
-            position: absolute; 
-            top: 0; left: 0; right: 0; 
-            height: 60%; 
-            background: #efe6d8; 
-            clip-path: polygon(0 0, 100% 0, 50% 100%); 
-            transform-origin: top; 
-            transition: transform 0.8s ease; 
-            z-index: 13; 
-        }
-        .envelope.open .flap { transform: rotateX(180deg); } 
+    /* OBÁLKA */
+    .envelope { 
+        position: absolute; 
+        top: -300px; 
+        left: 50%; 
+        transform: translateX(-50%); 
+        width: 280px; 
+        height: 180px; 
+        display: none; 
+        cursor: pointer; 
+        z-index: 10; 
+    }
+    .envelope.show { 
+        display: block; 
+        animation: fall 1.5s ease-out forwards; 
+    }
+    @keyframes fall { 
+        to { top: 60%; transform: translate(-50%, -50%); } 
+    }
+    
+    .envelope .body { 
+        position: absolute; 
+        inset: 0; 
+        background: #f6f1e8; 
+        border-radius: 8px; 
+        box-shadow: 0 10px 40px rgba(0,0,0,0.6); 
+        z-index: 12;
+    } 
+    .envelope .flap { 
+        position: absolute; 
+        top: 0; left: 0; right: 0; 
+        height: 60%; 
+        background: #efe6d8; 
+        clip-path: polygon(0 0, 100% 0, 50% 100%); 
+        transform-origin: top; 
+        transition: transform 0.8s ease; 
+        z-index: 13; 
+    }
+    .envelope.open .flap { transform: rotateX(160deg); } 
 
-        /* FOTKA */
-        .photo {
-            position: absolute;
-            left: 50%;
-            top: 50%;
-            width: 150px;
-            height: 230px;
-            transform: translate(-50%, -50%) scale(0.1);
-            opacity: 0;
-            z-index: 11; /* Mezi tělem obálky a pozadím */
-            background: url('https://static.wixstatic.com/media/f367ba_caa1f2aefcc041249f46cab85e210eae~mv2.jpg/v1/fill/w_320,h_555,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEBPOSTER.jpg') center/cover no-repeat;
-            box-shadow: 0 15px 40px rgba(0,0,0,0.8);
-            border: 5px solid white;
-            transition: transform 1.5s cubic-bezier(.17,.67,.41,1.18), opacity 1s ease;
-        }
-        .photo.reveal {
-            opacity: 1;
-            transform: translate(-50%, -120%) scale(1.5); /* Vyskočí nahoru a zvětší se */
-        }
-    </style>
+    /* FOTKA - VÝRAZNÉ ZVĚTŠENÍ */
+    .photo {
+        position: absolute;
+        left: 50%;
+        top: 60%; /* Pozice obálky */
+        width: 140px;
+        height: 220px;
+        transform: translate(-50%, -50%) scale(0.2);
+        opacity: 0;
+        z-index: 11; /* Za tělem obálky */
+        background: url('https://static.wixstatic.com/media/f367ba_caa1f2aefcc041249f46cab85e210eae~mv2.jpg/v1/fill/w_320,h_555,al_c,q_80,usm_0.66_1.00_0.01,enc_avif,quality_auto/WEBPOSTER.jpg') center/cover no-repeat;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.9);
+        border: 6px solid white;
+        transition: transform 2s cubic-bezier(.17,.67,.25,1), opacity 1s ease;
+    }
+    .photo.reveal {
+        opacity: 1;
+        /* Výrazné zvětšení a posun nahoru */
+        transform: translate(-50%, -130%) scale(2.8); 
+    }
+</style>
 </head>
 <body>
 
@@ -111,43 +111,42 @@
 
 <div class="photo" id="photo"></div>
 
-<audio id="curtainSound" src="https://cdn.pixabay.com/download/audio/2022/11/25/audio_82308.mp3?filename=curtain-82308.mp3"></audio>
-<audio id="bgMusic" loop src="https://www.boomplay.com/embed/118150502/MUSIC?colType=5&colID=64987332"></audio>
+<audio id="curtainSound" src="https://cdn.pixabay.com/audio/2022/11/25/audio_82308.mp3"></audio>
+
+<iframe id="musicFrame" style="display:none" width="0" height="0" frameborder="0" allow="autoplay"></iframe>
 
 <script>
 const curtain = document.getElementById('curtain');
 const envelope = document.getElementById('envelope');
 const photo = document.getElementById('photo');
 const curtainSound = document.getElementById('curtainSound');
-const bgMusic = document.getElementById('bgMusic');
+const musicFrame = document.getElementById('musicFrame');
 
 let stage = 0;
 
-// 1. KROK: Otevření opony
+// 1. KLIK: Opona se otevírá a hraje zvuk
 curtain.addEventListener('click', () => {
     if (stage !== 0) return;
     stage = 1;
 
-    curtainSound.play().catch(e => console.log("Audio block: ", e));
+    curtainSound.play();
     curtain.classList.add('open');
 
-    // Po animaci opony spadne obálka
     setTimeout(() => {
         envelope.classList.add('show');
-    }, 2000);
+    }, 2500);
 });
 
-// 2. KROK: Otevření obálky a vyjetí fotky
+// 2. KLIK: Obálka se otevře, vyjede fotka a začne hudba
 envelope.addEventListener('click', () => {
     if (stage !== 1) return;
     stage = 2;
 
     envelope.classList.add('open');
 
-    // Spuštění hudby (v tuhle chvíli už ji prohlížeč povolí)
-    bgMusic.play();
+    // Spuštění hudby z Boomplay (přidáním autoplay parametru)
+    musicFrame.src = "https://www.boomplay.com/embed/118150502/MUSIC?colType=5&colID=64987332&autoplay=true";
 
-    // Fotka vyjede po krátké pauze od otevření chlopně
     setTimeout(() => {
         photo.classList.add('reveal');
     }, 600);
@@ -156,4 +155,3 @@ envelope.addEventListener('click', () => {
 
 </body>
 </html>
-
